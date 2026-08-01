@@ -24,11 +24,15 @@ The interface uses Google's design language for GDG BITS Pilani Dubai Campus.
 - **Colour**: a black-and-white ground on Google's neutral ramp, one blue action
   colour, and the four brand colours reserved for the wheel and rhythm marks.
 - **Theme**: light and dark, toggled from the app bar and remembered in
-  `localStorage`. It follows the device preference until the user overrides it.
+  `localStorage`. It **always opens light**, deliberately ignoring the device's
+  dark-mode setting — the host screen is projected in a lit room and must never
+  come up dark because of someone's OS preference. A viewer who picks dark keeps
+  it on that device.
   A blocking inline script sets the theme before first paint, so there is no
   flash of the wrong theme.
-- **Logo**: `public/assets/gdg-logo.png`, top-left on every page. In dark mode it
-  is inverted in CSS rather than swapped for a second file.
+- **Logo**: top-left on every page. Two derived files ship — `gdg-logo-light.png`
+  and `gdg-logo-dark.png` — swapped by CSS on `data-theme`. Do not go back to a
+  CSS `invert()` filter: it turned the brand yellow brown and the red salmon.
 
 Design tokens all live at the top of `public/style.css`. To restyle for a future
 event, change the token block — not the components. `DESIGN.md` records the
@@ -91,13 +95,15 @@ IP).
 > ```
 
 1. Push this folder to a GitHub repo.
-2. On Render: **New → Web Service**, point it at the repo.
-3. Settings (or just let `render.yaml` apply them):
-   - Runtime: **Node**
-   - Build command: `npm install`
-   - Start command: `npm start`
-   - Health check path: `/healthz`
+2. On Render: **New → Blueprint**, point it at the repo. It reads `render.yaml`
+   for the runtime, build/start commands, health check path and region.
+3. Render prompts for **`ADMIN_PASSWORD`** (declared `sync: false`). Without it
+   the site deploys but `/admin` never unlocks.
 4. Deploy. Render sets `PORT` itself; the server reads it.
+
+**Region:** `render.yaml` pins `frankfurt`, the nearest of Render's five regions
+to Dubai. Render **cannot change a service's region after creation** — moving it
+means deleting the service and re-creating it from the Blueprint.
 
 ### Keeping it awake with UptimeRobot
 
@@ -136,7 +142,9 @@ Reveal — including by opening devtools. Two things enforce that:
 - **Put back** — releases the current player without using up their turn, for
   when you spin by accident.
 - **×** next to a name — removes someone (e.g. a duplicate or a test entry).
-- **Reset game** — clears every player and starts over.
+- **Master Reset** — wipes every player, their statements and all turns taken,
+  and sends every player screen back to the start with its form cleared, so the
+  same room can play again.
 
 ## Notes
 

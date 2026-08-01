@@ -16,11 +16,10 @@
       // Runs before first paint so the correct theme is never flashed.
       (function () {
         try {
-          var s = localStorage.getItem('gdg-theme');
-          if (!s)
-            s = matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light';
+          // Light unless the viewer has explicitly chosen dark. Deliberately
+          // ignores prefers-color-scheme: this is projected in a lit room, and
+          // the host should never find it dark because of an OS setting.
+          var s = localStorage.getItem('gdg-theme') === 'dark' ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', s);
         } catch (e) {}
       })();

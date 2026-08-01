@@ -73,9 +73,10 @@ Elevation is Google's own two-layer shadow (offset + blur), not a flat halo:
 
 Light and dark are both first-class. `data-theme` is written to `<html>` by a
 blocking inline script in each page's `<head>`, so the correct theme is painted
-on the first frame — there is no flash. It follows `prefers-color-scheme` until
-the user presses the app-bar toggle, after which `localStorage['gdg-theme']`
-wins.
+on the first frame — there is no flash. The default is **light**, and
+`prefers-color-scheme` is deliberately *not* consulted: this is projected in a
+lit room, so an OS-level dark setting must not decide how the room sees it. Only
+an explicit toggle, stored in `localStorage['gdg-theme']`, selects dark.
 
 The canvas wheel cannot read CSS, so it reads its palette from the custom
 properties via `getComputedStyle` and re-reads on the `themechange` event that
@@ -111,15 +112,28 @@ The signature object, and the piece with the most rules.
 
 ## Page frame
 
-`body` is a flex column at `min-height: 100dvh`; `main` is `flex: 1 0 auto` and
-`.footer` takes `margin-top: auto`. That is what pins the footer to the bottom
-edge on every page and every viewport.
+`body` is a flex column with a **definite** `height: 100dvh` and `overflow:
+hidden`; `main` is `flex: 1 1 auto; min-height: 0` with `overflow-y: auto`, and
+`.footer` takes `margin-top: auto`.
 
-Do **not** reintroduce per-page `min-height: calc(100dvh - Npx)` on the main
-region. That was the original approach and it is what made the footer's position
-wander from page to page — the subtracted constant was a guess at the chrome
-height and was wrong on every page but one. Below 560px the footer stacks
-centred instead of wrapping into a ragged L.
+Two rules here are load-bearing:
+
+- **`height`, not `min-height`.** `min-height` is not a definite height, so no
+  percentage or flex height constraint below it resolves — the roster then
+  expands to all 24 rows and drags the page ~1300px past the viewport. This is
+  what makes the whole fit-to-viewport layout work.
+- **Do not reintroduce per-page `min-height: calc(100dvh - Npx)`.** That was the
+  original approach and it made the footer's position wander page to page; the
+  subtracted constant was a guess at the chrome height and was wrong everywhere
+  but one page.
+
+`main`'s `overflow-y: auto` is a safety valve, not the plan: content scales with
+viewport height so it fits, but on an extreme viewport it scrolls there rather
+than being clipped out of reach.
+
+Because zoom shrinks the CSS viewport, vertical rhythm (paddings, gaps, textarea
+heights, empty states) is sized in **vh**, not vw — at zoom it is height that
+runs out first.
 
 ## Logo and mark
 
