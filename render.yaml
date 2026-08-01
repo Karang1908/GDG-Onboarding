@@ -3,6 +3,10 @@ services:
     name: council-two-truths
     runtime: node
     plan: free
+    # Nearest Render region to Dubai (~4,800km vs ~12,000km for the oregon
+    # default). Render cannot change a service's region after creation — moving
+    # it means deleting the service and re-creating it from this Blueprint.
+    region: frankfurt
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /healthz
