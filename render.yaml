@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: council-two-truths
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # sync: false means Render prompts for the value in the dashboard, so the
+      # password is never committed to the repo.
+      - key: ADMIN_PASSWORD
+        sync: false

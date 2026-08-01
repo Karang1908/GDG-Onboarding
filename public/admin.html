@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Host console · GDG BITS Pilani Dubai Campus</title>
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/GoogleSans-700.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/GoogleSansText-400.woff2" crossorigin />
+    <link rel="stylesheet" href="/style.css" />
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem('gdg-theme');
+          if (!s)
+            s = matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+          document.documentElement.setAttribute('data-theme', s);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <!--
+      THESIS: A broadcast surface first and a control panel second. It refuses
+      the dark casino wheel and the dashboard-of-cards; the wheel is drawn in
+      the four Google brand colours at the scale it has in life, and the picked
+      name is set at display size because a room reads it off a shared screen.
+      OWN-WORLD: Google Sans + Google Sans Text, Google neutral ramp, one blue
+      action colour, brand four on the wheel only. Pill controls, 2px borders,
+      Google elevation. Solid fills and heavy weights throughout: this screen is
+      re-compressed by a video call, so hairlines and soft gradients are banned.
+      STORY: The host signs in, sees who is ready, spins, reads three statements
+      aloud, lets the room argue, then reveals — and only then may move on.
+      FIRST VIEWPORT: Logo top-left. Left, the wheel with a pointer at twelve
+      o'clock and its controls beneath. Right, the spotlight panel and the
+      roster; before a spin the spotlight holds an honest empty state.
+      FORM: Brief-pinned Google design language; two-column console derived from
+      the host's real scene (talking to a room while operating).
+      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+    -->
+
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+          <path d="M12 17q-2.075 0-3.537-1.463Q7 14.075 7 12t1.463-3.538Q9.925 7 12 7t3.538 1.462Q17 9.925 17 12q0 2.075-1.462 3.537Q14.075 17 12 17ZM2 13q-.425 0-.712-.288Q1 12.425 1 12t.288-.713Q1.575 11 2 11h2q.425 0 .713.287Q5 11.575 5 12t-.287.712Q4.425 13 4 13Zm18 0q-.425 0-.712-.288Q19 12.425 19 12t.288-.713Q19.575 11 20 11h2q.425 0 .712.287.288.288.288.713t-.288.712Q22.425 13 22 13Zm-8-8q-.425 0-.712-.288Q11 4.425 11 4V2q0-.425.288-.713Q11.575 1 12 1t.713.287Q13 1.575 13 2v2q0 .425-.287.712Q12.425 5 12 5Zm0 18q-.425 0-.712-.288Q11 22.425 11 22v-2q0-.425.288-.712Q11.575 19 12 19t.713.288Q13 19.575 13 20v2q0 .425-.287.712Q12.425 23 12 23ZM5.65 7.05 4.575 6q-.3-.275-.288-.7.013-.425.288-.725.3-.3.725-.3t.7.3L7.05 5.65q.275.3.275.7 0 .4-.275.7-.275.3-.687.287-.413-.012-.713-.287ZM18 19.425l-1.05-1.075q-.275-.3-.275-.712 0-.413.275-.688.275-.3.688-.287.412.012.712.287L19.425 18q.3.275.288.7-.013.425-.288.725-.3.3-.725.3t-.7-.3ZM16.95 7.05q-.3-.275-.287-.688.012-.412.287-.712L18 4.575q.275-.3.7-.288.425.013.725.288.3.3.3.725t-.3.7L18.35 7.05q-.3.275-.7.275-.4 0-.7-.275ZM4.575 19.425q-.3-.3-.3-.725t.3-.7l1.075-1.05q.3-.275.712-.275.413 0 .688.275.3.275.287.688-.012.412-.287.712L6 19.425q-.275.3-.7.287-.425-.012-.725-.287Z"/>
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24">
+          <path d="M12 21q-3.75 0-6.375-2.625T3 12q0-3.75 2.625-6.375T12 3q.35 0 .688.025.337.025.662.075-1.025.725-1.638 1.887Q11.1 6.15 11.1 7.5q0 2.25 1.575 3.825Q14.25 12.9 16.5 12.9q1.375 0 2.525-.613 1.15-.612 1.85-1.637.05.325.075.662Q21 11.65 21 12q0 3.75-2.625 6.375T12 21Z"/>
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24">
+          <path d="M6 22q-.825 0-1.412-.587Q4 20.825 4 20V10q0-.825.588-1.412Q5.175 8 6 8h1V6q0-2.075 1.463-3.538Q9.925 1 12 1t3.538 1.462Q17 3.925 17 6v2h1q.825 0 1.413.588Q20 9.175 20 10v10q0 .825-.587 1.413Q18.825 22 18 22Zm6-5q.825 0 1.413-.587Q14 15.825 14 15q0-.825-.587-1.412Q12.825 13 12 13q-.825 0-1.412.588Q10 14.175 10 15q0 .825.588 1.413Q11.175 17 12 17ZM9 8h6V6q0-1.25-.875-2.125T12 3q-1.25 0-2.125.875T9 6Z"/>
+        </symbol>
+        <symbol id="i-error" viewBox="0 0 24 24">
+          <path d="M12 17q.425 0 .713-.288Q13 16.425 13 16t-.287-.713Q12.425 15 12 15t-.712.287Q11 15.575 11 16t.288.712Q11.575 17 12 17Zm-1-4h2V7h-2Zm1 9q-2.075 0-3.9-.788-1.825-.787-3.175-2.137-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175 1.35-1.35 3.175-2.137Q9.925 2 12 2t3.9.788q1.825.787 3.175 2.137 1.35 1.35 2.138 3.175Q22 9.925 22 12t-.787 3.9q-.788 1.825-2.138 3.175-1.35 1.35-3.175 2.137Q14.075 22 12 22Z"/>
+        </symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24">
+          <path d="M12 20q-3.35 0-5.675-2.325Q4 15.35 4 12q0-3.35 2.325-5.675Q8.65 4 12 4q1.725 0 3.3.712Q16.875 5.425 18 6.75V4h2v7h-7V9h4.2q-.8-1.4-2.187-2.2Q13.625 6 12 6 9.5 6 7.75 7.75T6 12q0 2.5 1.75 4.25T12 18q1.925 0 3.475-1.1T17.65 14h2.1q-.7 2.65-2.85 4.325Q14.75 20 12 20Z"/>
+        </symbol>
+        <symbol id="i-undo" viewBox="0 0 24 24">
+          <path d="M7 19v-2h7.1q1.575 0 2.738-1.025Q18 14.95 18 13.4q0-1.55-1.162-2.575Q15.675 9.8 14.1 9.8H7.8l2.6 2.6L9 13.8 4 8.8l5-5 1.4 1.4-2.6 2.6h6.3q2.425 0 4.163 1.6Q20 11 20 13.4q0 2.4-1.737 4Q16.525 19 14.1 19Z"/>
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+          <path d="M6.4 19 5 17.6l5.6-5.6L5 6.4 6.4 5l5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6Z"/>
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+          <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41Z"/>
+        </symbol>
+        <symbol id="i-group" viewBox="0 0 24 24">
+          <path d="M1 20v-2.8q0-.85.438-1.563.437-.712 1.162-1.087 1.55-.775 3.15-1.163Q7.35 13 9 13t3.25.387q1.6.388 3.15 1.163.725.375 1.163 1.087.437.713.437 1.563V20Zm17.5 0v-3q0-1.1-.612-2.113-.613-1.012-1.738-1.737 1.275.15 2.4.512 1.125.363 2.1.888.9.5 1.375 1.112Q22.5 16.275 22.5 17v3ZM9 12q-1.65 0-2.825-1.175Q5 9.65 5 8q0-1.65 1.175-2.825Q7.35 4 9 4q1.65 0 2.825 1.175Q13 6.35 13 8q0 1.65-1.175 2.825Q10.65 12 9 12Zm10-4q0 1.65-1.175 2.825Q16.65 12 15 12q-.275 0-.7-.062-.425-.063-.7-.138.675-.8 1.037-1.775Q15 9.05 15 8t-.363-2.025Q14.275 5 13.6 4.2q.35-.125.7-.163Q14.65 4 15 4q1.65 0 2.825 1.175Q19 6.35 19 8Z"/>
+        </symbol>
+        <symbol id="i-target" viewBox="0 0 24 24">
+          <path d="M11 21.95v-2.025q-3.05-.35-5.238-2.537Q3.575 15.2 3.225 12.15H1.2v-2h2.025q.35-3.05 2.537-5.238Q7.95 2.725 11 2.375V.35h2v2.025q3.05.35 5.238 2.537 2.187 2.188 2.537 5.238h2.025v2h-2.025q-.35 3.05-2.537 5.238Q16.05 19.575 13 19.925v2.025Zm1-4q2.475 0 4.238-1.762Q18 14.425 18 11.95q0-2.475-1.762-4.238Q14.475 5.95 12 5.95q-2.475 0-4.237 1.762Q6 9.475 6 11.95q0 2.475 1.763 4.238Q9.525 17.95 12 17.95Zm0-2.5q-1.45 0-2.475-1.025Q8.5 13.4 8.5 11.95q0-1.45 1.025-2.475Q10.55 8.45 12 8.45q1.45 0 2.475 1.025Q15.5 10.5 15.5 11.95q0 1.45-1.025 2.475Q13.45 15.45 12 15.45Z"/>
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="appbar">
+      <a class="brand" href="/">
+        <img class="logo-light" src="/assets/gdg-logo-light.png" alt="Google Developer Group, BITS Pilani Dubai Campus" />
+        <img class="logo-dark" src="/assets/gdg-logo-dark.png" alt="" aria-hidden="true" />
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-context">Host console</span>
+      </a>
+      <div class="appbar-actions">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-pressed="false">
+          <svg class="icon icon-sun hidden" aria-hidden="true"><use href="#i-sun" /></svg>
+          <svg class="icon icon-moon" aria-hidden="true"><use href="#i-moon" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Sign-in gate. The server sends no game data until this succeeds. -->
+    <main class="lock-wrap" id="lock">
+      <div class="card lock-card">
+        <div class="lock-badge">
+          <svg class="icon" aria-hidden="true"><use href="#i-lock" /></svg>
+        </div>
+        <h2>Host sign-in</h2>
+        <p class="lede">
+          This screen drives the wheel for the whole room. Ask the committee for
+          the password.
+        </p>
+        <div class="field" id="pw-field">
+          <input id="pw-input" type="password" autocomplete="current-password" placeholder=" " />
+          <label for="pw-input">Password</label>
+        </div>
+        <p class="msg-error" id="pw-error" role="alert"></p>
+        <button class="btn btn-filled btn-lg btn-block" id="pw-btn" type="button" style="margin-top: 20px">
+          Unlock console
+        </button>
+      </div>
+    </main>
+
+    <main class="console hidden" id="console">
+      <section class="wheel-panel">
+        <div class="wheel-stage">
+          <svg class="wheel-pointer" id="pointer" width="40" height="34" viewBox="0 0 40 34" aria-hidden="true">
+            <path d="M20 33 L2 3 A2 2 0 0 1 4 0 L36 0 A2 2 0 0 1 38 3 Z" fill="currentColor" />
+          </svg>
+          <canvas id="wheel" width="1100" height="1100" role="img" aria-label="Wheel of players"></canvas>
+          <div class="wheel-empty hidden" id="wheel-empty">
+            <svg class="icon" aria-hidden="true"><use href="#i-group" /></svg>
+            <p>Waiting for the first player to lock in their answers.</p>
+          </div>
+        </div>
+
+        <div class="wheel-controls">
+          <button class="btn btn-filled btn-lg" id="spin-btn" type="button">Spin the wheel</button>
+          <button class="btn btn-danger" id="reset-btn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh" /></svg>
+            Master Reset
+          </button>
+        </div>
+
+      </section>
+
+      <div class="console-side">
+        <section class="card">
+          <div id="spotlight-empty" class="spotlight-empty">
+            <svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>
+            <h3>Nobody is up yet</h3>
+            <p class="lede">Spin the wheel to pick the first player.</p>
+          </div>
+
+          <div id="spotlight" class="hidden">
+            <h2 class="spotlight-name" id="spotlight-name"></h2>
+            <ul class="claims" id="spotlight-statements"></ul>
+            <div class="spotlight-actions">
+              <button class="btn btn-filled" id="reveal-btn" type="button">Reveal the lie</button>
+              <button class="btn btn-outlined" id="next-btn" type="button">Next player</button>
+              <button class="btn btn-text" id="skip-btn" type="button">
+                <svg class="icon" aria-hidden="true"><use href="#i-undo" /></svg>
+                Put back
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="roster-head">
+            <h3>Players</h3>
+            <span class="chip" id="player-count">0</span>
+          </div>
+          <ul class="roster" id="roster"></ul>
+          <div class="roster-empty hidden" id="roster-empty">
+            <svg class="icon" aria-hidden="true"><use href="#i-group" /></svg>
+            <p>No one has joined yet. Players appear here as they enter their name.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span>Google Developer Group · BITS Pilani Dubai Campus</span>
+      <span class="footer-dots"><i></i><i></i><i></i><i></i></span>
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/theme.js"></script>
+    <script src="/admin.js"></script>
+  </body>
+</html>
