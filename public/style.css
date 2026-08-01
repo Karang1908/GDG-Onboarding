@@ -1029,10 +1029,22 @@ button {
 }
 
 .wheel-controls {
+  /* The parent grid centres its items, which shrink-wraps this row narrower
+     than the track and forces the buttons onto two lines. Take the full width
+     and centre the buttons here instead. */
+  width: 100%;
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+}
+
+/* The spin button's label changes with game state ("Spin the wheel",
+   "Spinning…", "Everyone has had a turn"). Without a floor width the whole row
+   resizes — and wraps — as the game progresses, which the room can see. */
+.btn-spin {
+  min-width: min(17rem, 100%);
 }
 
 .console-side {
