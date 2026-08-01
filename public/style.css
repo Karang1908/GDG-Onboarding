@@ -423,6 +423,11 @@ button {
 
 .btn-block {
   width: 100%;
+  /* A full-width button already centres its label, so the generous side padding
+     buys nothing — it only inflates the button's min-content width, which on a
+     320px phone pushed the whole card wider than the viewport. */
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .icon-btn {
@@ -1316,7 +1321,9 @@ button {
   flex: none;
   margin-top: auto;
   border-top: 2px solid var(--border);
-  padding: 26px clamp(20px, 4vw, 40px) 34px;
+  /* env() keeps the last line clear of the home indicator on notched phones. */
+  padding: 16px clamp(20px, 4vw, 40px)
+    calc(18px + env(safe-area-inset-bottom, 0px));
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1330,13 +1337,22 @@ button {
   font-weight: 500;
 }
 
-/* On a phone the two halves wrap into a ragged L; stack them centred instead. */
+.footer-dots {
+  flex: none;
+}
+
 @media (max-width: 560px) {
   .footer {
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
+    padding: 12px 20px calc(14px + env(safe-area-inset-bottom, 0px));
+    font-size: 0.8125rem;
     gap: 12px;
+  }
+
+  /* The app bar already carries the full lockup, so the footer only needs the
+     campus. Dropping the prefix is what keeps this to one short line — stacking
+     it instead made the footer 104-125px tall on a phone. */
+  .footer-long {
+    display: none;
   }
 }
 
