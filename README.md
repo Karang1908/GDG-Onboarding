@@ -51,6 +51,21 @@ prints a loud warning at startup — so you find out at boot, not mid-meeting.
 The check is enforced on the server for every host action, not just at the login
 screen. Someone who skips the page and opens a raw socket still gets nothing.
 
+### Brute-force protection
+
+The URL is public, so guessing is throttled. The first **8** wrong answers from
+an address are rejected instantly — a host who typos twice notices nothing —
+after which each further failure is answered with a doubling delay, capped at
+30 seconds.
+
+Two properties worth keeping if you ever touch this:
+
+- **It is keyed by IP, not by socket.** A per-socket counter is worthless,
+  because an attacker just reconnects to reset it.
+- **It delays rather than locks out.** The correct password is *never* delayed,
+  so the real host can always get in — even while someone else is hammering the
+  same address.
+
 ## Running locally
 
 ```bash

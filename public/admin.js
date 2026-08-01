@@ -17,7 +17,9 @@ const playerCount = document.getElementById('player-count');
 
 // The four Google brand colours, in brand order.
 const BRAND = ['#4285f4', '#ea4335', '#fbbc04', '#34a853'];
-const SPIN_MS = 5200;
+// A 5s spin is the whole drama, but honour a host who has asked their OS for
+// reduced motion — shorten it rather than removing the mechanic.
+const SPIN_MS = matchMedia('(prefers-reduced-motion: reduce)').matches ? 900 : 5200;
 
 let state = { players: [], current: null, revealed: false };
 let pendingState = null;
@@ -398,7 +400,15 @@ function setPwError(message) {
 }
 
 function signIn(password, fromStorage) {
+  // A wrong password is deliberately answered slowly after repeated failures,
+  // so the button has to say it is still working.
+  if (!fromStorage) {
+    pwBtn.disabled = true;
+    pwBtn.textContent = 'Checking…';
+  }
   socket.emit('admin:hello', password, (res) => {
+    pwBtn.disabled = false;
+    pwBtn.textContent = 'Unlock console';
     if (res?.ok) {
       sessionStorage.setItem(PW_KEY, password);
       lock.classList.add('hidden');

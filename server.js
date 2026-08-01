@@ -84,6 +84,57 @@ function passwordMatches(supplied) {
   return crypto.timingSafeEqual(given, real);
 }
 
+/* ---------- host sign-in throttle ---------- */
+
+// Without this a script gets thousands of guesses a second against a public
+// URL. Keyed by IP rather than by socket, because reconnecting would otherwise
+// reset a per-socket counter and defeat the whole thing.
+const FREE_ATTEMPTS = 8; // typos cost the real host nothing
+const MAX_DELAY_MS = 30_000;
+const ATTEMPT_TTL_MS = 30 * 60 * 1000;
+const authAttempts = new Map();
+
+function clientKey(socket) {
+  const fwd = socket.handshake.headers['x-forwarded-for'];
+  if (typeof fwd === 'string' && fwd.length) return fwd.split(',')[0].trim();
+  return socket.handshake.address || 'unknown';
+}
+
+// Delay rather than lock out: brute force becomes hopeless, but the real host
+// is never barred from their own console.
+function failureDelay(key) {
+  const now = Date.now();
+  const rec = authAttempts.get(key);
+  const fails = rec && now - rec.at < ATTEMPT_TTL_MS ? rec.fails : 0;
+  if (fails < FREE_ATTEMPTS) return 0;
+  return Math.min(MAX_DELAY_MS, 2 ** (fails - FREE_ATTEMPTS) * 1000);
+}
+
+function noteAuthFailure(key) {
+  const now = Date.now();
+  const rec = authAttempts.get(key);
+  const fails = rec && now - rec.at < ATTEMPT_TTL_MS ? rec.fails + 1 : 1;
+  authAttempts.set(key, { fails, at: now });
+
+  // Keep the map from growing without bound on a long-lived server.
+  if (authAttempts.size > 500) {
+    for (const [k, v] of authAttempts) {
+      if (now - v.at > ATTEMPT_TTL_MS) authAttempts.delete(k);
+    }
+  }
+}
+
+/* ---------- socket <-> player binding ---------- */
+
+// Joining again on the same socket must drop the old room, or this socket keeps
+// receiving the previous player's state - which includes their statements.
+function bindPlayer(socket, playerId) {
+  const prev = socket.data.playerId;
+  if (prev && prev !== playerId) socket.leave(`player:${prev}`);
+  socket.data.playerId = playerId;
+  socket.join(`player:${playerId}`);
+}
+
 function shuffleStatements(statements, lieIndex) {
   const items = statements.map((text, i) => ({ text, isLie: i === lieIndex }));
   for (let i = items.length - 1; i > 0; i--) {
@@ -169,13 +220,25 @@ io.on('connection', (socket) => {
   // open a raw socket and emit admin:spin without ever loading the page.
   const isAdmin = () => socket.data.isAdmin === true;
 
-  socket.on('admin:hello', (password, ack) => {
+  socket.on('admin:hello', async (password, ack) => {
     if (!ADMIN_PASSWORD) {
       return ack?.({ error: 'Server has no ADMIN_PASSWORD set. See README.' });
     }
+
+    const key = clientKey(socket);
+
     if (!passwordMatches(password)) {
-      return ack?.({ error: 'Wrong password.' });
+      const delay = failureDelay(key);
+      noteAuthFailure(key);
+      if (delay) await new Promise((r) => setTimeout(r, delay));
+      return ack?.({
+        error: delay
+          ? 'Wrong password. Too many attempts — wait a moment and try again.'
+          : 'Wrong password.',
+      });
     }
+
+    authAttempts.delete(key);
     socket.data.isAdmin = true;
     socket.join('admin');
     ack?.({ ok: true });
@@ -186,8 +249,7 @@ io.on('connection', (socket) => {
   socket.on('player:hello', (playerId, ack) => {
     const player = typeof playerId === 'string' ? findPlayer(playerId) : null;
     if (player) {
-      socket.data.playerId = player.id;
-      socket.join(`player:${player.id}`);
+      bindPlayer(socket, player.id);
     }
     if (typeof ack === 'function') ack(playerView(player ? player.id : null));
   });
@@ -214,8 +276,7 @@ io.on('connection', (socket) => {
     };
     state.players.push(player);
 
-    socket.data.playerId = player.id;
-    socket.join(`player:${player.id}`);
+    bindPlayer(socket, player.id);
 
     ack?.({ state: playerView(player.id) });
     broadcast();
@@ -253,6 +314,11 @@ io.on('connection', (socket) => {
 
   socket.on('admin:spin', (ack) => {
     if (!isAdmin()) return ack?.({ error: 'Not signed in as host.' });
+    // The UI disables the button, but two host tabs (or a double-click race)
+    // could otherwise steal the turn out from under the room mid-guess.
+    if (state.currentPlayerId) {
+      return ack?.({ error: 'Someone is already up. Finish their turn first.' });
+    }
     const pool = state.players.filter((p) => p.submitted && !p.done);
     if (pool.length === 0) {
       return ack?.({ error: 'Nobody left to pick.' });

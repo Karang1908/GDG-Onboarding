@@ -537,6 +537,27 @@ button {
   margin-top: 0;
 }
 
+/* ---------- connection status ---------- */
+
+.conn-banner {
+  position: fixed;
+  left: 50%;
+  /* Fallback only; connection.js sets this from the footer's real height,
+     which changes when the footer stacks on narrow screens. */
+  bottom: 96px;
+  transform: translateX(-50%);
+  z-index: 60;
+  padding: 13px 24px;
+  border-radius: var(--pill);
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--shadow-3);
+}
+
 /* ---------- chips ---------- */
 
 .chip {
