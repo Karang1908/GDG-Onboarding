@@ -101,40 +101,23 @@ Then open http://localhost:3000. To test properly, open `/admin` in one window
 and `/player` in a couple of others (or on your phone, using your machine's LAN
 IP).
 
-## Deploying to Render
+## Deploying
 
-> Heads up: this folder lives inside `~/Desktop`, which is itself a git repo. Run
-> `git init` **in this folder** so you push only this project, not your whole
-> Desktop:
->
-> ```bash
-> cd ~/Desktop/councilonboarding
-> git init && git add . && git commit -m "Two truths and a lie"
-> git branch -M main
-> git remote add origin <your-repo-url> && git push -u origin main
-> ```
+The app needs a **persistent Node process** — it holds open WebSocket
+connections and keeps game state in memory. Railway, Fly.io, Koyeb, Heroku or a
+VPS all work. **Vercel and Netlify do not**: serverless functions cannot hold a
+socket open and wipe in-memory state between invocations.
 
-1. Push this folder to a GitHub repo.
-2. On Render: **New → Blueprint**, point it at the repo. It reads `render.yaml`
-   for the runtime, build/start commands, health check path and region.
-3. Render prompts for **`ADMIN_PASSWORD`** (declared `sync: false`). Without it
-   the site deploys but `/admin` never unlocks.
-4. Deploy. Render sets `PORT` itself; the server reads it.
+Whatever the host, it needs:
 
-**Region:** `render.yaml` pins `frankfurt`, the nearest of Render's five regions
-to Dubai. Render **cannot change a service's region after creation** — moving it
-means deleting the service and re-creating it from the Blueprint.
+- Build command: `npm run build`
+- Start command: `npm start`
+- `ADMIN_PASSWORD` set in the environment (without it `/admin` never unlocks)
+- `PORT` — the server reads it; most platforms set it automatically
 
-### Keeping it awake with UptimeRobot
-
-Render's free tier sleeps after ~15 minutes of inactivity and takes ~50s to wake.
-Point an UptimeRobot HTTP monitor at:
-
-```
-https://<your-service>.onrender.com/healthz
-```
-
-with a 5-minute interval. Set this up **before** the meeting, not during it.
+Pick a region close to the room. If the host sleeps when idle (most free
+tiers), point an UptimeRobot HTTP monitor at `/healthz` on a 5-minute interval,
+set up the day before rather than during the meeting.
 
 ## How the secret is kept
 
