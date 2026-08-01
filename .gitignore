@@ -3,3 +3,4 @@ state.json
 *.log
 .DS_Store
 .env
+dist/

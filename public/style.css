@@ -9,27 +9,18 @@
 
 /* ---------- typeface ---------- */
 
+/* Google Sans ships as a *variable* font: one file covers the whole weight
+   range, so declaring 400/500/700 separately downloaded three byte-identical
+   copies (105KB for 35KB of font). A weight range on one face is equivalent
+   and 70KB cheaper. Google Sans Text below is three genuinely different files. */
 @font-face {
   font-family: 'Google Sans';
-  src: url('/assets/fonts/GoogleSans-400.woff2') format('woff2');
-  font-weight: 400;
+  src: url('/assets/fonts/GoogleSans.woff2') format('woff2');
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: 'Google Sans';
-  src: url('/assets/fonts/GoogleSans-500.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Google Sans';
-  src: url('/assets/fonts/GoogleSans-700.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+
 @font-face {
   font-family: 'Google Sans Text';
   src: url('/assets/fonts/GoogleSansText-400.woff2') format('woff2');

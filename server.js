@@ -3,6 +3,7 @@ const fs = require('fs');
 const http = require('http');
 const crypto = require('crypto');
 const express = require('express');
+const compression = require('compression');
 const { Server } = require('socket.io');
 
 // Local dev reads .env; on Render the vars come from the dashboard instead, so a
@@ -198,14 +199,36 @@ function broadcast() {
 
 /* ---------- routes ---------- */
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve the production build when it exists, otherwise the raw source. That
+// means `npm start` works either way and `npm run dev` always gets originals.
+const DIST = path.join(__dirname, 'dist');
+const PUBLIC = path.join(__dirname, 'public');
+const ROOT = fs.existsSync(path.join(DIST, 'index.html')) ? DIST : PUBLIC;
+const BUILT = ROOT === DIST;
+
+app.use(compression());
+
+app.use(
+  express.static(ROOT, {
+    // Built asset filenames carry a content hash, so they can never go stale —
+    // a change produces a new name. HTML is the entry point and must not be
+    // cached, or clients keep loading the old hashed references.
+    setHeaders(res, filePath) {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      } else if (BUILT) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+    },
+  })
+);
 
 app.get('/player', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'player.html'));
+  res.sendFile(path.join(ROOT, 'player.html'));
 });
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  res.sendFile(path.join(ROOT, 'admin.html'));
 });
 
 // Plain 200 endpoint for UptimeRobot to ping so Render's free tier stays awake.

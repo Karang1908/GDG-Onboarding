@@ -74,8 +74,28 @@ Two properties worth keeping if you ever touch this:
 
 ```bash
 npm install
-npm start
+npm run dev      # serves public/ — edit and refresh
 ```
+
+## Production build
+
+```bash
+npm install
+npm run build    # public/ -> dist/
+npm start        # serves dist/ when it exists, else public/
+```
+
+`build.js` syntax-checks the server, then minifies CSS/JS, collapses HTML
+whitespace, content-hashes every asset filename and rewrites the references,
+and drops files nothing loads.
+
+At serve time the server gzips text responses and sets cache headers:
+hashed assets get `max-age=31536000, immutable` (a change produces a new
+filename, so they can never go stale) and HTML gets `no-cache`, or clients
+would keep loading the old hashed references.
+
+Measured: CSS 29KB -> 18.7KB minified -> **4.7KB gzipped**; the Socket.IO
+client 156KB -> **38KB gzipped**. `dist/` is gitignored — build it on deploy.
 
 Then open http://localhost:3000. To test properly, open `/admin` in one window
 and `/player` in a couple of others (or on your phone, using your machine's LAN
