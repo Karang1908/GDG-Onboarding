@@ -34,13 +34,21 @@ function readPalette() {
     ink: v('--wheel-ink', '#202124'),
     doneFill: v('--surface-3', '#f1f3f4'),
     doneInk: v('--text-3', '#80868b'),
-    hubBg: v('--bg', '#ffffff'),
     hubBorder: v('--border', '#dadce0'),
-    hubInk: v('--text', '#202124'),
   };
 }
 
 let palette = readPalette();
+
+// The GDG mark sits in the hub. Redraw once it decodes, since the first paint
+// usually happens before the image is ready.
+const hubMark = new Image();
+let hubMarkReady = false;
+hubMark.onload = () => {
+  hubMarkReady = true;
+  drawWheel();
+};
+hubMark.src = '/assets/gdg-mark.png';
 
 window.addEventListener('themechange', () => {
   palette = readPalette();
@@ -140,20 +148,21 @@ function drawWheel() {
     ctx.restore();
   });
 
-  // Hub
+  // Hub. Stays white in both themes — the mark carries a black outline that
+  // would disappear on the dark ground.
   ctx.beginPath();
   ctx.arc(cx, cy, hub, 0, Math.PI * 2);
-  ctx.fillStyle = palette.hubBg;
+  ctx.fillStyle = '#ffffff';
   ctx.fill();
   ctx.strokeStyle = palette.hubBorder;
   ctx.lineWidth = 6;
   ctx.stroke();
 
-  ctx.fillStyle = palette.hubInk;
-  ctx.font = `700 ${hub * 0.44}px 'Google Sans', system-ui, sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('GDG', cx, cy);
+  if (hubMarkReady) {
+    // Same proportion the landing wheel uses, so both hubs read identically.
+    const size = hub * 1.28;
+    ctx.drawImage(hubMark, cx - size / 2, cy - size / 2, size, size);
+  }
 }
 
 function targetRotationFor(index, count) {
