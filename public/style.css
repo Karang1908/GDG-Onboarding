@@ -149,11 +149,20 @@ body {
   padding: 0;
 }
 
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 /* Sticky footer: the page is a column and the main region absorbs the slack,
    so the footer always sits on the bottom edge instead of floating wherever
    the content happens to end. */
+/* A *definite* height, not min-height: percentage and flex height constraints
+   below only resolve against a definite one, and without it the roster expands
+   to all 24 rows and drags the page far past the viewport. */
 body {
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background: var(--bg);
@@ -165,8 +174,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* min-height:0 lets the main region shrink below its content, which is what
+   allows the height-constrained layouts below to fit instead of overflowing.
+   overflow-y is a safety valve: content should scale to fit, but if a viewport
+   is extreme it scrolls here rather than being clipped out of reach. */
 main {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 h1,
@@ -451,7 +467,7 @@ button {
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: var(--r-lg);
-  padding: clamp(20px, 3vw, 32px);
+  padding: clamp(16px, 2.4vh, 32px) clamp(18px, 3vw, 32px);
 }
 
 /* ---------- text fields (Material outlined) ---------- */
@@ -476,7 +492,7 @@ button {
 }
 
 .field textarea {
-  min-height: 78px;
+  min-height: clamp(54px, 9vh, 78px);
 }
 
 .field label {
@@ -596,19 +612,19 @@ button {
 .landing {
   max-width: 1180px;
   margin: 0 auto;
-  padding: clamp(32px, 7vh, 80px) clamp(20px, 5vw, 48px) 64px;
+  padding: clamp(14px, 3vh, 72px) clamp(20px, 5vw, 48px) clamp(14px, 3vh, 56px);
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-  gap: clamp(32px, 6vw, 80px);
+  gap: clamp(18px, 4vh, 72px);
   align-items: center;
+  min-height: 0;
 }
 
 @media (max-width: 900px) {
   .landing {
     grid-template-columns: 1fr;
     text-align: left;
-    gap: 44px;
-    padding-top: 40px;
+    gap: clamp(16px, 3vh, 40px);
   }
 }
 
@@ -617,18 +633,18 @@ button {
 }
 
 .landing .lede {
-  margin-top: 22px;
+  margin-top: clamp(10px, 1.8vh, 22px);
 }
 
 .landing-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin-top: 36px;
+  margin-top: clamp(16px, 3vh, 36px);
 }
 
 .landing-note {
-  margin-top: 28px;
+  margin-top: clamp(10px, 1.8vh, 28px);
   font-size: 0.875rem;
   color: var(--text-3);
   display: flex;
@@ -643,7 +659,7 @@ button {
 }
 
 .brand-wheel {
-  width: min(400px, 78vw);
+  width: min(400px, 78vw, 40vh);
   aspect-ratio: 1;
   position: relative;
 }
@@ -710,14 +726,15 @@ button {
 .player-main {
   max-width: 620px;
   margin: 0 auto;
-  padding: clamp(20px, 4vw, 40px) clamp(16px, 5vw, 24px) 72px;
+  padding: clamp(14px, 2.6vh, 40px) clamp(16px, 5vw, 24px)
+    clamp(16px, 3vh, 48px);
 }
 
 .stepper {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 26px;
+  margin-bottom: clamp(14px, 2.4vh, 26px);
 }
 
 .step-dot {
@@ -737,21 +754,21 @@ button {
 }
 
 .stage-head {
-  margin-bottom: 26px;
+  margin-bottom: clamp(14px, 2.4vh, 26px);
 }
 
 .stage-head .lede {
-  margin-top: 12px;
+  margin-top: clamp(6px, 1.2vh, 12px);
   font-size: 1rem;
 }
 
 .statement-fields {
   display: grid;
-  gap: 16px;
+  gap: clamp(10px, 1.6vh, 16px);
 }
 
 .lie-group {
-  margin-top: 30px;
+  margin-top: clamp(16px, 2.8vh, 30px);
 }
 
 .lie-group > h3 {
@@ -795,7 +812,7 @@ button {
 }
 
 .player-submit {
-  margin-top: 32px;
+  margin-top: clamp(16px, 2.8vh, 32px);
 }
 
 /* Waiting */
@@ -992,36 +1009,52 @@ button {
   text-align: left;
 }
 
+/* The console fills exactly the space between app bar and footer. Nothing
+   scrolls at page level — the roster scrolls inside its own card — so the host
+   never has to scroll a screen the whole room is watching. */
 .console {
+  width: 100%;
   max-width: 1500px;
   margin: 0 auto;
-  padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 32px) 56px;
+  padding: clamp(12px, 1.8vh, 28px) clamp(16px, 3vw, 32px)
+    clamp(12px, 1.8vh, 28px);
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
-  gap: clamp(20px, 2.4vw, 32px);
-  align-items: start;
+  gap: clamp(16px, 2vw, 32px);
+  align-items: stretch;
+  min-height: 0;
+  overflow: hidden;
 }
 
 @media (max-width: 1080px) {
   .console {
     grid-template-columns: 1fr;
+    /* Stacked, the two columns genuinely cannot both fit; let this one scroll
+       rather than clip the roster out of reach. */
+    overflow-y: auto;
   }
 }
 
 .wheel-panel {
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   justify-items: center;
-  gap: 24px;
+  gap: clamp(12px, 1.6vh, 24px);
+  min-height: 0;
 }
 
+/* Square, and capped by whichever of width or height runs out first. */
 .wheel-stage {
   position: relative;
   width: min(660px, 100%);
+  aspect-ratio: 1;
+  max-height: 100%;
+  margin-inline: auto;
 }
 
 #wheel {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
 }
 
@@ -1037,6 +1070,11 @@ button {
 
 .wheel-empty {
   aspect-ratio: 1;
+  /* Must respect the height cap too, or the pre-game screen overflows even
+     though the real wheel does not. */
+  max-height: 100%;
+  max-width: 100%;
+  margin-inline: auto;
   border: 3px dashed var(--border);
   border-radius: 50%;
   display: grid;
@@ -1075,22 +1113,31 @@ button {
 
 .console-side {
   display: grid;
-  gap: clamp(24px, 2.6vw, 32px);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(16px, 2vh, 28px);
+  min-height: 0;
 }
 
 /* The right column carries the two things the room reads, so it gets more
    generous padding than the default card. */
 .console-side .card {
-  padding: clamp(26px, 2.8vw, 40px);
+  padding: clamp(18px, 2.4vh, 36px) clamp(20px, 2.6vw, 36px);
+}
+
+/* The roster card takes whatever height is left and scrolls its list inside. */
+.console-side .card:last-child {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* Spotlight */
 .spotlight-empty {
   display: grid;
   justify-items: center;
-  gap: 18px;
+  gap: clamp(10px, 1.8vh, 18px);
   text-align: center;
-  padding: clamp(48px, 7vw, 86px) 20px;
+  padding: clamp(24px, 5vh, 86px) 20px;
   color: var(--text-2);
 }
 
@@ -1116,16 +1163,16 @@ button {
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  margin-bottom: 20px;
+  margin-bottom: clamp(10px, 1.8vh, 20px);
   overflow-wrap: break-word;
 }
 
 .claims {
   list-style: none;
   padding: 0;
-  margin: 0 0 24px;
+  margin: 0 0 clamp(12px, 2vh, 24px);
   display: grid;
-  gap: 12px;
+  gap: clamp(8px, 1.4vh, 12px);
   counter-reset: claim;
 }
 
@@ -1138,7 +1185,7 @@ button {
   background: var(--surface-2);
   border: 2px solid var(--border);
   border-radius: var(--r-md);
-  padding: 16px 18px;
+  padding: clamp(10px, 1.8vh, 16px) 18px;
   font-size: clamp(1rem, 1.3vw, 1.125rem);
   line-height: 1.4;
   overflow-wrap: anywhere;
@@ -1237,9 +1284,11 @@ button {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 460px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   display: grid;
+  grid-auto-rows: max-content;
   gap: 5px;
 }
 
@@ -1303,9 +1352,9 @@ button {
 .roster-empty {
   display: grid;
   justify-items: center;
-  gap: 16px;
+  gap: clamp(10px, 1.6vh, 16px);
   text-align: center;
-  padding: clamp(40px, 5vw, 64px) 16px;
+  padding: clamp(20px, 4vh, 64px) 16px;
   color: var(--text-2);
   font-size: 1.0625rem;
 }
@@ -1378,4 +1427,40 @@ button {
 }
 .footer-dots i:nth-child(4) {
   background: var(--g-green);
+}
+
+/* ---------- fit-to-viewport fallbacks ---------- */
+
+/* On a phone the landing's decorative wheel is the single biggest block of
+   height; shrink it hard, and drop it entirely when there is genuinely no room
+   rather than pushing the actions off screen. */
+@media (max-width: 900px) {
+  .brand-wheel {
+    width: min(300px, 56vw, 26vh);
+  }
+}
+
+@media (max-height: 620px) and (max-width: 900px) {
+  .landing-visual {
+    display: none;
+  }
+}
+
+/* The landing's decorative wheel yields sooner: 125% zoom on a phone still
+   leaves ~675px of height, which is not enough for it plus the actions. */
+@media (max-height: 720px) and (max-width: 900px) {
+  .landing-visual {
+    display: none;
+  }
+}
+
+/* Narrow screens: the supporting paragraph is the largest remaining block. */
+@media (max-width: 420px) {
+  .landing .lede {
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .lie-group .hint {
+    font-size: 0.875rem;
+  }
 }
