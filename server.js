@@ -396,6 +396,12 @@ io.on('connection', (socket) => {
   // so the same room can play again.
   socket.on('admin:reset', () => {
     if (!isAdmin()) return;
+    // Logged because "the game reset itself" is otherwise impossible to
+    // diagnose after the fact - this says who did it and when.
+    console.log(
+      `[${new Date().toISOString()}] MASTER RESET by ${clientKey(socket)} ` +
+        `(wiped ${state.players.length} player(s))`
+    );
     state = { players: [], currentPlayerId: null, revealed: false };
 
     // Broadcast to everyone connected, not just the players we still hold a
