@@ -101,6 +101,24 @@ Then open http://localhost:3000. To test properly, open `/admin` in one window
 and `/player` in a couple of others (or on your phone, using your machine's LAN
 IP).
 
+## Running it publicly (no ports, no certificate)
+
+```bash
+./serve-public.sh
+```
+
+Builds, starts the game, opens a Cloudflare tunnel and prints the public HTTPS
+URL. The tunnel dials **out**, so it works behind NAT, double NAT, or an ISP
+that blocks inbound traffic — no port forwarding and no certificate to manage.
+
+The URL is different every run, so start it first and share the link after.
+Leave the window open for the meeting; Ctrl-C stops the tunnel and the server.
+
+Port forwarding is the alternative, but it needs inbound 80/443 to actually
+reach the machine. Check for double NAT first: if the router's own WAN address
+is private, forwarding on it can never work — the upstream box has to forward
+too, and on an ISP-locked router that is not possible.
+
 ## Deploying
 
 The app needs a **persistent Node process** — it holds open WebSocket
